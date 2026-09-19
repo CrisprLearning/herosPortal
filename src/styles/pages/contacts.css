@@ -1,0 +1,22 @@
+/* Contacts page: a compact contact book — one card per group, one row per person. */
+
+.pp-contact-book { max-width: 760px; margin-left: 0; } /* left-aligned, not centred */
+.pp-contact-group .pp-card-head { margin-bottom: 4px; }
+.pp-contact-list { display: flex; flex-direction: column; }
+.pp-contact-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.pp-contact-row:last-child { border-bottom: none; padding-bottom: 2px; }
+.pp-contact-meta { flex: 1; min-width: 0; line-height: 1.3; }
+.pp-contact-meta strong { display: block; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pp-contact-meta small { display: block; font-size: 12.5px; color: var(--muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pp-contact-meta span { display: block; font-size: 12.5px; color: var(--brand); font-weight: 700; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pp-contact-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.pp-contact-actions .pp-icon-btn { width: 38px; height: 38px; }
+.pp-contact-actions .pp-icon-btn.is-call { background: var(--brand); border-color: var(--brand); color: #fff; }
+.pp-contact-actions .pp-icon-btn.is-call:hover { background: var(--brand-deep); }
+.pp-contact-actions .pp-icon-btn.is-wa { background: var(--good); border-color: var(--good); color: var(--good-ink); }
+.pp-contact-actions .pp-icon-btn.is-wa:hover { background: #7fd08b; }
+/* Small phones: the reach line goes; the buttons say it all. */
+@media (max-width: 380px) {
+  .pp-contact-meta span { display: none; }
+  .pp-contact-row { gap: 10px; }
+}

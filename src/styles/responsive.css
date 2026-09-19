@@ -1,0 +1,78 @@
+/* Breakpoints for the shared layout grids. Imported last so it wins over the partials above. */
+
+/* Small phones: tighten the room tiles and switcher. */
+@media (max-width: 380px) {
+  .pp-switcher-meta small { display: none; }
+  .pp-kpi-value strong { font-size: 30px; }
+  .pp-kpi-grid { grid-template-columns: 1fr; }
+}
+
+/* Phones: title + account avatar on the first row, the student switcher on
+   its own row below, so neither the child's name nor the title gets clipped. */
+@media (max-width: 639px) {
+  .pp-pagehead { flex-wrap: wrap; row-gap: 10px; }
+  .pp-switcher-wrap { order: 3; flex: 1 1 100%; }
+  .pp-switcher { max-width: 100%; }
+  /* Hostel: room tiles two-up, the third spanning the row (no orphan). */
+  .pp-room-tiles { grid-template-columns: 1fr 1fr; }
+  .pp-room-tile:nth-child(3) { grid-column: 1 / -1; }
+  .pp-room-tile strong { font-size: 20px; }
+}
+
+@media (max-width: 767px) {
+  .pp-card-head h2 { font-size: 18px; }
+}
+
+/* Phones and tablets (no sidebar yet): the rent and leave tables would only
+   fit as a sideways-scrolling strip, so they become stacked lists instead. */
+@media (max-width: 1023px) {
+  .pp-payments, .pp-leaves { display: none; }
+  .pp-payment-list { display: flex; }
+}
+
+@media (min-width: 640px) {
+  .pp-content { padding: 18px; }
+  .pp-dl { grid-template-columns: 1fr 1fr; }
+  .pp-form-grid { grid-template-columns: 1fr 1fr; }
+  .pp-grid-2 { grid-template-columns: 1fr 1fr; }
+  .pp-grid-360-progress { grid-template-columns: 1fr 2fr; align-items: start; }
+  .pp-kpi-grid { grid-template-columns: repeat(4, 1fr); }
+  .pp-grid-attendance { grid-template-columns: 1fr 1fr; align-items: start; }
+  .pp-grid-attendance > :nth-child(3) { grid-column: 1 / -1; }
+  .pp-grid-hostel-top { grid-template-columns: 1.2fr 1fr; }
+  .pp-grid-skeleton { grid-template-columns: 1fr 1fr; }
+  .pp-grid-skeleton .pp-skeleton-tall { grid-column: 1 / -1; }
+  .pp-otp .otpEntry { max-width: 84px; }
+}
+
+/* Desktop: sidebar appears, tab bar goes away, three-column dashboard. */
+@media (min-width: 1024px) {
+  .pp-sidebar { display: flex; }
+  .pp-tabbar { display: none; }
+  .pp-pagehead-mobile { display: none; }
+  .pp-pagehead { margin: 6px 4px 18px; }
+  .pp-pagehead-title { font-size: 26px; }
+  .pp-content { padding: 16px; padding-bottom: 24px; }
+  .pp-foot { padding-bottom: 20px; text-align: center; }
+  .pp-card { padding: 22px; }
+  .pp-table-wrap { margin: 0 -22px; padding: 0 22px; }
+  .myCustomToaster { bottom: 30px; }
+  .pp-switcher { max-width: 340px; }
+
+  .pp-grid-360-hero { grid-template-columns: 2fr 1fr; align-items: stretch; }
+  .pp-grid-360-quiz { grid-template-columns: 1fr 2fr; align-items: start; }
+  .pp-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .pp-grid-attendance { grid-template-columns: repeat(3, 1fr); }
+  .pp-grid-attendance > :nth-child(3) { grid-column: auto; }
+  .pp-grid-attendance .pp-att-kpis { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .pp-grid-hostel-top { grid-template-columns: 1.35fr 1fr; }
+}
+
+@media (min-width: 1280px) {
+  .pp-grid-attendance .pp-att-kpis { grid-template-columns: repeat(2, 1fr); }
+  .pp-kpi-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

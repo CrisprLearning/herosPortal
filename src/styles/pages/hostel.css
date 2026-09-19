@@ -1,0 +1,45 @@
+/* Hostel page: residence card, contacts, payments list. */
+
+.pp-hostel-name { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+.pp-hostel-icon { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); flex-shrink: 0; }
+.pp-hostel-name strong { display: block; font-size: 17px; line-height: 1.3; }
+.pp-hostel-name small { display: flex; align-items: center; gap: 4px; font-size: 13px; color: var(--muted); font-weight: 600; margin-top: 3px; }
+.pp-room-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.pp-room-tile { padding: 12px; border-radius: 16px; background: var(--panel-soft); min-width: 0; }
+.pp-room-tile.is-dark { background: var(--brand); color: #fff; }
+.pp-room-tile small { display: block; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; opacity: .6; }
+.pp-room-tile strong { display: block; font-size: 22px; letter-spacing: -0.02em; margin: 2px 0; }
+.pp-room-tile span { display: block; font-size: 12px; opacity: .75; font-weight: 600; }
+
+/* Amenities live under the room tiles inside the Residence card. */
+.pp-hostel-amenities { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+.pp-includes-label { display: block; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.pp-includes { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 8px; }
+.pp-includes li { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.pp-includes svg { color: var(--good-deep); }
+
+/* Contacts card: warden + hostel provider, reusing the contact-book rows. */
+.pp-hostel-contacts .pp-card-head { margin-bottom: 4px; }
+.pp-hostel-contacts .pp-contact-meta .pp-contact-phones { display: flex; flex-wrap: wrap; gap: 2px 12px; white-space: normal; overflow: visible; }
+.pp-contact-phones a { color: inherit; text-decoration: none; }
+.pp-contact-phones a:hover { text-decoration: underline; }
+
+.pp-payments { min-width: 720px; }
+.pp-payments td, .pp-leaves td { white-space: nowrap; }
+.pp-payments td .pp-td-note, .pp-leaves td .pp-td-note { white-space: normal; }
+.pp-payment-list { display: none; flex-direction: column; }
+.pp-payment { padding: 12px 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
+.pp-payment:last-child { border-bottom: none; }
+.pp-payment-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.pp-payment-row strong { font-size: 15px; }
+.pp-payment-row small, .pp-payment-meta small { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.pp-payment-row > * { min-width: 0; }
+.pp-payment-row strong { overflow-wrap: anywhere; }
+
+/* Leave requests */
+.pp-leaves { min-width: 620px; }
+.pp-leaves td strong { display: block; white-space: nowrap; }
+.pp-card-head .pp-btn-leave { padding: 10px 16px; font-size: 14px; }
+.pp-leave-empty { padding: 6px 0 10px; font-size: 14px; color: var(--muted); font-weight: 600; }
+.pp-leave-empty b { color: var(--ink); }
+.pp-leave-list .pp-payment-row strong { font-size: 14.5px; }

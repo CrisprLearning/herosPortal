@@ -1,0 +1,37 @@
+/* Student switcher: the chip in the page heading that picks which child to view. */
+
+.pp-switcher-wrap { position: relative; min-width: 0; }
+.pp-switcher {
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px 10px 5px 5px; border: 1px solid var(--line); border-radius: 999px;
+  background: #fff; text-align: left; max-width: 62vw;
+  transition: box-shadow .15s, border-color .15s;
+}
+.pp-switcher:hover, .pp-switcher.is-open { border-color: var(--teal); box-shadow: var(--shadow); }
+.pp-switcher-meta { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+.pp-switcher-meta strong { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pp-switcher-meta small { font-size: 12px; color: var(--muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pp-switcher-sub { font-weight: 500 !important; }
+.pp-switcher-caret { color: var(--muted); flex-shrink: 0; transition: transform .15s; }
+.pp-switcher.is-open .pp-switcher-caret { transform: rotate(180deg); }
+.pp-switcher-skeleton { width: 180px; height: 50px; background: var(--panel-soft); }
+
+.pp-switcher-menu {
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 60;
+  min-width: 300px; max-width: calc(100vw - 28px);
+  background: #fff; border: 1px solid var(--line); border-radius: 18px;
+  box-shadow: 0 18px 44px rgba(0, 95, 115, 0.18); padding: 6px; overflow: hidden;
+  animation: pp-pop .16s ease-out;
+}
+.pp-switcher-menu-title { padding: 8px 12px 6px; font-size: 11.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.pp-switcher-item {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 10px 12px; border: none; background: transparent; border-radius: 14px; text-align: left;
+}
+.pp-switcher-item:hover { background: var(--panel-soft); }
+.pp-switcher-item.is-active { background: var(--panel-soft); }
+.pp-switcher-item .pp-switcher-meta { flex: 1; }
+.pp-switcher-check {
+  width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0;
+  background: var(--brand); color: #fff;
+}

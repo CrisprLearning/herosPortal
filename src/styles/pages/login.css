@@ -1,0 +1,97 @@
+/* Login page, welcome slider and the "no student linked" screen. */
+
+.pp-login {
+  position: relative;
+  min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 24px 16px; gap: 18px;
+  background: var(--bg) radial-gradient(60% 50% at 100% 0%, rgba(0, 95, 115, 0.12), transparent 70%);
+}
+.pp-login-card {
+  width: 100%; max-width: 440px; background: var(--panel); border-radius: 28px;
+  padding: 28px 24px; box-shadow: var(--shadow);
+}
+.pp-login-brand { position: absolute; top: 14px; left: 0; right: 0; display: flex; align-items: center; justify-content: center; }
+.pp-login-brand img { width: 96px; height: auto; }
+.pp-login-split { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+
+/* Country code picker (prefix of the mobile number field) */
+.pp-phone { position: relative; }
+.pp-cc { display: flex; }
+.pp-cc-trigger {
+  display: flex; align-items: center; gap: 6px; padding: 0 10px 0 14px; border: none; border-right: 1.5px solid var(--line);
+  background: var(--brand-soft); color: var(--brand); font: inherit; font-weight: 700; font-size: 16px; cursor: pointer; outline: none;
+  transition: background .15s;
+}
+.pp-cc-trigger:hover, .pp-cc.is-open .pp-cc-trigger { background: #d5e9ee; }
+.pp-cc-trigger:focus-visible { box-shadow: inset 0 0 0 2px var(--teal); }
+.pp-cc-flag { font-size: 20px; line-height: 1; }
+.pp-cc-code { font-variant-numeric: tabular-nums; }
+.pp-cc-caret { display: grid; place-items: center; color: var(--muted); transition: transform .18s; }
+.pp-cc.is-open .pp-cc-caret { transform: rotate(180deg); }
+.pp-cc-menu {
+  position: absolute; left: 0; right: 0; top: calc(100% + 8px); z-index: 60; margin: 0; padding: 6px; list-style: none;
+  background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 18px 44px rgba(0, 95, 115, 0.18);
+  max-height: min(50vh, 320px); overflow-y: auto; animation: pp-pop .16s ease-out; scroll-margin: 20px;
+}
+.pp-cc-option { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; cursor: pointer; font-size: 15px; }
+.pp-cc-option.is-active { background: var(--panel-soft); }
+.pp-cc-option.is-selected { background: var(--brand-soft); }
+.pp-cc-name { flex: 1; min-width: 0; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pp-cc-option.is-selected .pp-cc-name { font-weight: 800; color: var(--brand-deep); }
+.pp-cc-option .pp-cc-code { color: var(--muted); font-weight: 700; font-size: 14px; }
+.pp-cc-check { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; color: #fff; }
+.pp-cc-option.is-selected .pp-cc-check { background: var(--brand); }
+
+.pp-login h1, .pp-login h2 { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; color: var(--brand-deep); }
+.pp-login h2 span { font-weight: 600; font-size: 14px; color: var(--muted); display: block; margin-top: 4px; letter-spacing: 0; }
+.pp-login-sub { color: var(--muted); font-size: 14px; margin-bottom: 22px; }
+.pp-login-sub strong { color: var(--ink); }
+.pp-otp { display: flex; gap: 10px; justify-content: space-between; margin-bottom: 4px; }
+.pp-otp .otpEntry {
+  flex: 1; min-width: 0; width: 100%; max-width: 76px; aspect-ratio: 1; border: 1.5px solid var(--line); border-radius: 16px;
+  text-align: center; font-size: 26px; font-weight: 800; padding: 0; outline: none; background: #fff; transition: border-color .15s;
+}
+.pp-otp .otpEntry:focus { border-color: var(--teal); }
+.pp-login .resend-btn { display: inline-block; margin: 14px auto 6px; }
+.pp-login .resend-btn:disabled { color: var(--muted); }
+.pp-login .continue-btn { position: relative; margin-top: 4px; text-align: center; }
+.pp-login .continue-btn .pp-btn-loader { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); }
+.pp-login .continue-btn .pp-btn-loader .loader { width: 20px; height: 20px; }
+.pp-field-error { min-height: 20px; margin-top: 8px; }
+.pp-field-error p { margin: 0; font-size: 12.5px; font-weight: 700; color: var(--bad-ink); }
+.pp-login-terms { margin-top: 12px; font-size: 12px; color: var(--muted); }
+.pp-login-terms a { color: var(--brand); font-weight: 700; }
+.pp-login-demo {
+  display: flex; align-items: center; gap: 8px; margin-top: 16px; padding: 10px 12px;
+  border-radius: 12px; background: var(--panel-soft); font-size: 12.5px; color: var(--ink-2); font-weight: 600;
+}
+.pp-login-foot { font-size: 13px; color: var(--muted); text-align: center; max-width: 440px; }
+
+/* Illustration beside the card (components/LoginHero.jsx) */
+.pp-login-hero { width: 100%; max-width: 440px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.pp-slide { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+.pp-slide img { width: 100%; max-height: 210px; object-fit: contain; border-radius: 18px; }
+.pp-slide figcaption {
+  font-size: 20px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.35; text-align: center;
+  color: var(--brand-deep); padding: 0 8px;
+}
+
+/* No-student default screen (signed in, nothing mapped yet) */
+.pp-nostudent .pp-login-card { text-align: center; }
+.pp-nostudent .pp-state-icon { margin: 0 auto 14px; }
+.pp-nostudent h1 { font-size: 22px; }
+.pp-nostudent .pp-login-sub { margin-bottom: 20px; }
+.pp-nostudent .pp-btn-block + .pp-btn-block { margin-top: 10px; }
+
+/* Wide screens: illustration panel on the left, sign-in card on the right */
+@media (min-width: 900px) {
+  .pp-login { padding: 32px 40px; gap: 28px; }
+  .pp-login-brand { top: 20px; left: auto; right: 28px; justify-content: flex-end; }
+  .pp-login-brand img { width: 112px; }
+  .pp-login-split { flex-direction: row; justify-content: center; align-items: center; gap: 48px; }
+  .pp-login-hero { flex: 1 1 auto; max-width: 620px; gap: 18px; }
+  .pp-slide { gap: 22px; }
+  .pp-slide img { max-height: min(52vh, 460px); }
+  .pp-slide figcaption { font-size: 27px; }
+  .pp-login-card { flex: 0 0 440px; }
+}

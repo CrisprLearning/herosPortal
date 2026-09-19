@@ -1,0 +1,22 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Crispr Learning · Parent portal (React)
+   Design system shared by every page. Mobile-first: flat light ground, white
+   rounded cards, deep-teal primary actions, amber / green / pink-red status
+   colours, Plus Jakarta Sans. Mirrors the candidate portal (candidatePortal).
+
+   This file is only the index. The order below is the cascade order, so keep
+   responsive.css last.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@import './base/tokens.css';
+@import './base/reset.css';
+@import './components/shell.css';
+@import './components/primitives.css';
+@import './components/switcher.css';
+@import './components/modals.css';
+@import './pages/login.css';
+@import './pages/student-360.css';
+@import './pages/courses.css';
+@import './pages/hostel.css';
+@import './pages/contacts.css';
+@import './responsive.css';
