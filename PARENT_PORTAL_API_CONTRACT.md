@@ -56,9 +56,13 @@ PHP_CLI_SERVER_WORKERS=4 php -S 127.0.0.1:8099 -t CrisprTechApp
 
 ## 2. Conventions
 
-**Base path.** `/parent/` on the host that serves `CrisprTechApp`
-(`https://crisprtech.app` in production; locally
-`PHP_CLI_SERVER_WORKERS=4 php -S 127.0.0.1:8099 -t CrisprTechApp`). No `/api` prefix.
+**Base path.** `/parent/` under wherever `CrisprTechApp` is mounted. In
+production that is `https://crisprtech.app/crispr-apis`, so the full URL is
+`https://crisprtech.app/crispr-apis/parent/<script>.php`. Locally
+(`PHP_CLI_SERVER_WORKERS=4 php -S 127.0.0.1:8099 -t CrisprTechApp`) the folder
+is served at the root, so it is `http://127.0.0.1:8099/parent/<script>.php`.
+The SPA reads the base from `VITE_API_BASE` (origin plus prefix) and falls
+back to those two defaults in `src/lib/api.js`.
 
 **Envelope.** Same as `/parent/login.php` and the `/user` scripts:
 
@@ -872,12 +876,13 @@ Still open:
 ## 12. Frontend integration checklist
 
 - [x] `src/lib/parentApi.js` targets every path above; `VITE_API_BASE` is
-      the CrisprTechApp origin and `VITE_DEMO_MODE` defaults to off.
+      the CrisprTechApp base URL (origin plus mount prefix) and
+      `VITE_DEMO_MODE` defaults to off.
 - [x] `mentor`, `batch` and empty test / attendance data are null-safe in
       `Student360Page.jsx`.
 - [x] Parents with no mapped student see a notice instead of empty screens.
 - [ ] Run `parent-schema.sql` (sections 1–7; section 7 adds `hostel_leave_requests`)
       and `parent-payments-schema.sql` on production.
-- [ ] Confirm the production origin for the PHP APIs (`https://crisprtech.app`
-      is assumed in `src/lib/api.js`).
+- [x] Production base for the PHP APIs is `https://crisprtech.app/crispr-apis`
+      (default in `src/lib/api.js`).
 - [ ] Add a `status` badge to the switcher for inactive students if wanted.

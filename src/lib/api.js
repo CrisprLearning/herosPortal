@@ -2,19 +2,23 @@ import axios from 'axios';
 import { clearToken, getToken } from './auth';
 import { currentAppPath, href } from './paths';
 
-// API origin resolution. The parent APIs are plain PHP scripts under
-// CrisprTechApp/parent/*.php (same host as the /user and /restricted APIs),
-// so the base is the bare ORIGIN — no /api suffix.
-//   1. VITE_API_BASE (origin) when set — see .env.example.
-//   2. Otherwise localhost -> `php -S 127.0.0.1:8099 -t CrisprTechApp`,
-//      anything else -> production.
+// API base resolution. The parent APIs are plain PHP scripts under
+// CrisprTechApp/parent/*.php. In production CrisprTechApp is mounted at
+// https://crisprtech.app/crispr-apis, so every request goes to
+// https://crisprtech.app/crispr-apis/parent/<script>.php. Locally
+// `php -S 127.0.0.1:8099 -t CrisprTechApp` serves the folder at the root,
+// so /parent/*.php lives directly under the origin.
+//   1. VITE_API_BASE (origin plus optional path prefix) when set — see .env.example.
+//   2. Otherwise localhost -> http://127.0.0.1:8099, anything else -> production.
 const ENV_API_BASE = import.meta.env?.VITE_API_BASE;
+const PROD_API_BASE = 'https://crisprtech.app/crispr-apis';
+const LOCAL_API_BASE = 'http://127.0.0.1:8099';
 
 export const BASE_URL = ENV_API_BASE
   ? String(ENV_API_BASE).replace(/\/+$/, '')
   : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-      ? 'http://127.0.0.1:8099'
-      : 'https://crisprtech.app');
+      ? LOCAL_API_BASE
+      : PROD_API_BASE);
 
 // Demo mode renders the whole portal from src/data/parentPortalDemo.js.
 // Off by default now that the /parent APIs exist; set VITE_DEMO_MODE=1 to
