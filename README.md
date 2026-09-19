@@ -36,7 +36,7 @@ The portal talks to the PHP APIs in `CrisprTechApp/parent/` (see
 endpoint and field). Locally, serve that repo and point the app at it:
 
 ```bash
-php -S 127.0.0.1:8099 -t /Users/abhijithcs/personal/CrisprTechApp
+PHP_CLI_SERVER_WORKERS=4 php -S 127.0.0.1:8099 -t /Users/abhijithcs/personal/CrisprTechApp
 ```
 
 `.env.development` already sets `VITE_API_BASE=http://127.0.0.1:8099`. OTP

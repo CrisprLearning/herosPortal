@@ -4,13 +4,23 @@
     {
       "name": "parent-portal",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 5174
     },
     {
       "name": "crispr-api",
       "runtimeExecutable": "env",
-      "runtimeArgs": ["PHP_CLI_SERVER_WORKERS=4", "php", "-S", "127.0.0.1:8099", "-t", "/Users/abhijithcs/personal/CrisprTechApp"],
+      "runtimeArgs": [
+        "PHP_CLI_SERVER_WORKERS=4",
+        "php",
+        "-S",
+        "127.0.0.1:8099",
+        "-t",
+        "/Users/abhijithcs/personal/CrisprTechApp"
+      ],
       "port": 8099
     }
   ]

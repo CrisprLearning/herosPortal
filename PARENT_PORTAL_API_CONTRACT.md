@@ -17,20 +17,40 @@ demo data in `src/data/parentPortalDemo.js` mirrors these shapes.
 | --- | --- | --- |
 | Login (mobile + OTP) | `/login` | `POST /parent/authenticate.php`, `POST /parent/login.php` |
 | Shell (student switcher, headings, logout, profile) | all | `GET /parent/me.php`, `POST /parent/update-profile.php`, `POST /parent/logout.php` |
-| Student 360 | `/student-360` | `GET /parent/student-360.php?candidateId=`, `GET /parent/progress-reports.php?candidateId=` |
+| Student 360 | `/student-360` | `GET /parent/student-360.php?candidateId=`, `GET /parent/progress-reports.php?candidateId=`, `GET /parent/quiz-stats.php?candidateId=&quizId=`, `GET /parent/course-progress.php?candidateId=` |
 | Courses + course payments | `/courses` | `GET /parent/courses.php?candidateId=`, `GET /parent/course-payments.php?candidateId=` |
 | Hostel + rent payments | `/hostel` | `GET /parent/hostel.php?candidateId=` |
 | Hostel leave requests | `/hostel` | `GET /parent/hostel-leaves.php?candidateId=`, `POST /parent/hostel-leave-request.php` |
 | Contacts | `/contacts` | `GET /parent/contacts.php?candidateId=` |
 
-Ten endpoints in total: three auth, seven portal. Files:
+Fourteen endpoints in total: three auth, eleven portal. Shared files:
 
 | File | Purpose |
 | --- | --- |
 | `parent-api-bootstrap.php` | CORS, DB, token validation, `requireMappedCandidate()`, response + query helpers |
 | `parent-secure-token-validations.php` | Bearer token decrypt / expiry check (sends 401) |
+| `parent-student-proxy.php` | Runs an existing `/user/*.php` (student) API as the child: mints a student token for the mapped candidate, calls the script over HTTP and re-wraps the answer. Used by `quiz-stats.php` |
+| `parent-hostel-leave-shape.php` | Leave enums, row shape and the provider / warden SMS for the two leave endpoints |
 | `parent-contacts-config.php` | Institute contacts shown on the Contacts screen |
-| `parent-schema.sql`, `parent-payments-schema.sql` | Auth tables; `payments_course_fee` and `payments_hostel_fee` ledgers |
+| `parent-schema.sql`, `parent-payments-schema.sql` | Auth tables, `candidate_progress_cards`, `hostel_allotted`, `hostel_leave_requests`; `payments_course_fee` and `payments_hostel_fee` ledgers |
+
+**Wrappers vs native scripts.** Where the candidate app already has the
+endpoint under `/user`, the parent script is a thin wrapper
+(`quiz-stats.php` → `user/quiz/quiz-stats.php`): the parent token and the
+child mapping are checked here, then the student script runs unchanged with
+a token minted for the child. Everything else is native because no student
+endpoint returns the parent-side shape (`student-360.php` merges the data of
+`user/dashboard-summary.php`, `user/quiz/quiz-summary.php` and the exam
+attempts; `course-progress.php` builds the whole subject → chapter → part
+tree that `user/courses/get-course-progress*.php` only serve one chapter of).
+
+The wrapper calls the app's own origin (`PARENT_STUDENT_API_BASE` env var or
+PHP constant overrides it). With PHP's built-in server that is a request to
+itself, so run it with workers or the wrapper waits on its own process:
+
+```
+PHP_CLI_SERVER_WORKERS=4 php -S 127.0.0.1:8099 -t CrisprTechApp
+```
 
 ---
 
@@ -38,7 +58,7 @@ Ten endpoints in total: three auth, seven portal. Files:
 
 **Base path.** `/parent/` on the host that serves `CrisprTechApp`
 (`https://crisprtech.app` in production; locally
-`php -S 127.0.0.1:8099 -t CrisprTechApp`). No `/api` prefix.
+`PHP_CLI_SERVER_WORKERS=4 php -S 127.0.0.1:8099 -t CrisprTechApp`). No `/api` prefix.
 
 **Envelope.** Same as `/parent/login.php` and the `/user` scripts:
 
@@ -454,7 +474,12 @@ Class statistics for one quiz, the same payload as the candidate app's
 | `topScore`, `classAverage` | number\|null | class average is ceiled to whole marks |
 | `subjects[]` | array | per-section "child vs class" bars; may be `[]` |
 
-Answers `404` with a human-readable `error` while the report is not generated yet.
+Answers `404` with a human-readable `error` while the report is not generated yet
+("No completed attempt found" / "Report not generated yet"), `400` without a
+`quizId`. The payload also carries the student script's `quizId`, `attemptId`
+and `title`. Implemented as a wrapper over `user/quiz/quiz-stats.php` (see
+`parent-student-proxy.php`); a student-side `401` is reported as `502` so the
+SPA does not log the parent out for a server-side problem.
 
 ### 6.4 `GET /parent/course-progress.php?candidateId=` (auth)
 
@@ -499,6 +524,14 @@ Returns `data: null` when the child has no video course.
 
 Subjects are ordered as in the course content tree; chapters and modules keep
 their content order. Empty chapters are omitted.
+
+Implementation notes: the primary course is the active `catalogType = 1`
+enrolment with the latest expiry whose catalog item points at an active
+`course_bundle_config`; `courseId` is the catalog id. Ids are
+`"<moduleId>"`, `"<moduleId>-<chapter>"` and `"<moduleId>-<chapter>-<part>"`
+where `<chapter>` is the subject-local chapter index (the id the student app
+and `candidate_course_progress` use). A part is 100 % once
+`candidate_course_progress.completed = 1`, else `progress ÷ duration`.
 
 ## 7. Courses
 
@@ -693,8 +726,9 @@ The UI computes outstanding, paid-so-far and next-due from `payments`.
 
 ### 8.2 `GET /parent/hostel-leaves.php?candidateId=` (auth)
 
-Leave requests the parent has raised for this child, newest first. Returns
-`[]` for day scholars.
+Leave requests the parent has raised for this child, newest first, from
+`hostel_leave_requests` (`parent-schema.sql` section 7, `status = 1`).
+Returns `[]` for day scholars. `id` is `L-<row id>`.
 
 ```json
 [
@@ -721,12 +755,24 @@ Leave requests the parent has raised for this child, newest first. Returns
 
 Creates a leave request. Body: `candidateId`, `outAt`, `inAt`, `reason`,
 `goingTo`, `destination`, `mode`, `remarks` (same values as 8.2). Server
-validates that the child is an active hosteller of this parent, that `inAt`
-is after `outAt`, and that `reason`, `goingTo` and `mode` are from the enums.
+validates that the child is an active hosteller of this parent
+(`hostel_allotted.status = 1`), that `inAt` is after `outAt`, that `outAt` is
+not before today, that the span is ≤ 60 days, that `reason`, `goingTo` and
+`mode` are from the enums, `destination` (≤ 120 chars) is given when
+`goingTo = Other`, `remarks` ≤ 300 chars, and that no pending / approved
+request already overlaps the dates. Each failure is a `400` with a
+human-readable `error`; a non-hosteller child is `400` too, a child that is
+not the parent's is `403`.
+
 Responds with the stored request (status `pending`, `days` computed
-server-side) and **notifies the hostel provider** (SMS / WhatsApp to
-`hostelProviderContact`, plus the warden) with the student's name, dates,
-reason and mode. Failure envelope carries a human-readable `error`.
+server-side) plus `notified` (how many numbers were messaged) and **notifies
+the hostel provider**: an SMS to every `hostelProviderContact` number and to
+the warden with the student's name, out / in stamps, days, reason and mode
+(`notifiedOn` / `notifiedTo` are stored on the row). The SMS goes through
+`vegaSendSMS()` with template code `SMS_HOSTEL_LEAVE`; that code must be
+mapped to a MSG91 flow in `secret-credentials/crispr/smsblackbox.php` (flow
+variables `student`, `out`, `in`, `days`, `reason`, `mode`). Until it is,
+the helper logs "Unknown templateCode" and the request is still stored.
 
 ---
 
@@ -801,6 +847,15 @@ Decided during implementation (change on request):
    `payments_hostel_fee`. Both are read-only for the portal.
 7. **Class teacher** is configured in `parent-contacts-config.php`; the
    student's mentor is added automatically from the mapping.
+8. **Marks units.** `exam_attempts.finalScore`, `quiz_attempts.finalScore`
+   and `candidate_profile_stats` store marks × 100 (`user/exam-report.php`);
+   every parent payload divides back to marks / percent (2026-09-19; the
+   earlier `student-360.php` returned the raw ×100 values).
+9. **Leave requests** live in `hostel_leave_requests`; decisions
+   (`leaveStatus`, `decisionNote`) are written by office tooling, not the
+   portal.
+10. **Wrappers** for student endpoints call the app's own origin with a
+    minted student token rather than duplicating the student logic.
 
 Still open:
 
@@ -810,6 +865,9 @@ Still open:
 - **Quiz attempts** are not part of the test list yet.
 - **Bed / mess** for hostel rooms are not modelled anywhere.
 - **Token revocation** on logout (no token store exists).
+- **Leave SMS template.** `SMS_HOSTEL_LEAVE` needs a MSG91 flow id in
+  `smsblackbox.php`; the leave decision (approve / reject) UI for the hostel
+  provider does not exist yet.
 
 ## 12. Frontend integration checklist
 
@@ -818,8 +876,8 @@ Still open:
 - [x] `mentor`, `batch` and empty test / attendance data are null-safe in
       `Student360Page.jsx`.
 - [x] Parents with no mapped student see a notice instead of empty screens.
-- [ ] Run `parent-schema.sql` (if not already applied) and
-      `parent-payments-schema.sql` on production.
+- [ ] Run `parent-schema.sql` (sections 1–7; section 7 adds `hostel_leave_requests`)
+      and `parent-payments-schema.sql` on production.
 - [ ] Confirm the production origin for the PHP APIs (`https://crisprtech.app`
       is assumed in `src/lib/api.js`).
 - [ ] Add a `status` badge to the switcher for inactive students if wanted.
