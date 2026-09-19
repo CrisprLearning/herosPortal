@@ -26,10 +26,16 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # The site is served from https://<owner>.github.io/<repo>/ .
+      # With a custom domain (public/CNAME) the site is served from the root;
+      # without one it lives at https://<owner>.github.io/<repo>/ .
+      - name: Pick base path
+        run: |
+          if [ -f public/CNAME ]; then
+            echo "BASE_PATH=/" >> "$GITHUB_ENV"
+          else
+            echo "BASE_PATH=/${{ github.event.repository.name }}/" >> "$GITHUB_ENV"
+          fi
       - run: npm run build
-        env:
-          BASE_PATH: /${{ github.event.repository.name }}/
       # GitHub Pages has no SPA rewrite; serving index.html as the 404 page
       # lets deep links like /herosPortal/courses load the app and route
       # client-side.
