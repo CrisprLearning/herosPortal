@@ -3,6 +3,7 @@ import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { getMe, sendOtp, verifyOtp } from '../lib/parentApi';
 import { isAuthenticated, setCachedParent, setSelectedChildId, setToken } from '../lib/auth';
 import { DEMO_MODE } from '../lib/api';
+import { asset, href } from '../lib/paths';
 import { Icon } from '../components/Icons';
 import { useToast } from '../components/Toast';
 import LoginHero from '../components/LoginHero';
@@ -183,7 +184,7 @@ export default function LoginPage() {
       setCachedParent({ parent, children });
       setSelectedChildId(children[0]?.id);
       // Hard navigation so StudentProvider mounts fresh for this parent.
-      window.location.assign(resolveNextPath());
+      window.location.assign(href(resolveNextPath()));
     } catch (err) {
       toast(err?.response?.data?.error || err?.message || 'Incorrect OTP.');
       setVerifying(false);
@@ -226,7 +227,7 @@ export default function LoginPage() {
   return (
     <div className="pp-login">
       <header className="pp-login-brand">
-        <img src="/logo/crispr-logo.svg" alt="Crispr Learning" />
+        <img src={asset('logo/crispr-logo.svg')} alt="Crispr Learning" />
       </header>
 
       <div className="pp-login-split">

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { clearToken, getToken } from './auth';
+import { currentAppPath, href } from './paths';
 
 // API origin resolution. The parent APIs are plain PHP scripts under
 // CrisprTechApp/parent/*.php (same host as the /user and /restricted APIs),
@@ -34,9 +35,9 @@ api.interceptors.request.use((config) => {
 // send the parent back to /login, remembering where they were.
 export function handleUnauthorized() {
   clearToken();
-  if (window.location.pathname !== '/login') {
-    const next = encodeURIComponent(window.location.pathname + window.location.search);
-    window.location.replace(`/login?next=${next}`);
+  if (currentAppPath() !== '/login') {
+    const next = encodeURIComponent(currentAppPath() + window.location.search);
+    window.location.replace(href(`/login?next=${next}`));
   }
 }
 

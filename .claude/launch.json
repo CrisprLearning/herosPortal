@@ -22,6 +22,20 @@
         "/Users/abhijithcs/personal/CrisprTechApp"
       ],
       "port": 8099
+    },
+    {
+      "name": "pages-preview",
+      "runtimeExecutable": "env",
+      "runtimeArgs": [
+        "BASE_PATH=/herosPortal/",
+        "npx",
+        "vite",
+        "preview",
+        "--port",
+        "4173",
+        "--strictPort"
+      ],
+      "port": 4173
     }
   ]
 }

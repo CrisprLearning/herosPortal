@@ -9,12 +9,13 @@ import CoursesPage from './pages/CoursesPage';
 import HostelPage from './pages/HostelPage';
 import ContactsPage from './pages/ContactsPage';
 import { isAuthenticated } from './lib/auth';
+import { currentAppPath } from './lib/paths';
 
 const DEFAULT_ROUTE = '/student-360';
 
 function Protected({ children }) {
   if (!isAuthenticated()) {
-    const next = encodeURIComponent(window.location.pathname + window.location.search);
+    const next = encodeURIComponent(currentAppPath() + window.location.search);
     return <Navigate to={`/login?next=${next}`} replace />;
   }
   return (

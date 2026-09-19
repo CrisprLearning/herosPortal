@@ -3,6 +3,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { clearToken } from '../lib/auth';
 import { logout, isProfileComplete } from '../lib/parentApi';
 import { DEMO_MODE } from '../lib/api';
+import { asset } from '../lib/paths';
 import { Icon } from './Icons';
 import Avatar from './Avatar';
 import StudentSwitcher from './StudentSwitcher';
@@ -19,7 +20,7 @@ export const NAV = [
   { path: '/contacts', label: 'Contacts', short: 'Contacts', icon: Icon.Contacts, title: (n) => `${n}'s Contacts` },
 ];
 
-const LOGO = '/logo/crispr-logo.svg';
+const LOGO = asset('logo/crispr-logo.svg');
 
 export function firstName(name = '') {
   return String(name).trim().split(/\s+/)[0] || '';

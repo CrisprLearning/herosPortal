@@ -6,7 +6,12 @@ import react from '@vitejs/plugin-react';
 // and preview servers already fall back to index.html for unknown paths, so no
 // custom middleware is needed here (unlike vegaPilot, which multiplexes several
 // entry HTML files).
+// Sub-path the built site is served from. Locally '/', on GitHub Pages
+// '/herosPortal/' (set by .github/workflows/deploy-pages.yml).
+const base = process.env.BASE_PATH || '/';
+
 export default defineConfig({
+  base,
   plugins: [react()],
   server: {
     port: 5174,
