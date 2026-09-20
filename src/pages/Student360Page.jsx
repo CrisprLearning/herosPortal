@@ -4,6 +4,7 @@ import { useChildData } from '../components/StudentProvider';
 import Avatar from '../components/Avatar';
 import ExamStatsDialog from '../components/ExamStatsDialog';
 import ExamTrendChart from '../components/ExamTrendChart';
+import MonthPicker from '../components/MonthPicker';
 import ReportsDialog from '../components/ReportsDialog';
 import SubjectProgressDialog from '../components/SubjectProgressDialog';
 import { Icon } from '../components/Icons';
@@ -435,12 +436,7 @@ export default function Student360Page() {
             <Card className="pp-att-card">
               <div className="pp-card-head">
                 <h2>Class attendance</h2>
-                <label className="pp-select-wrap">
-                  <select value={monthKey} onChange={(e) => setMonthKey(e.target.value)} aria-label="Attendance month">
-                    {months.map((m) => <option key={m.key} value={m.key}>{m.label}</option>)}
-                  </select>
-                  <Icon.ChevronDown width={16} height={16} />
-                </label>
+                <MonthPicker months={months} value={month?.key} onChange={setMonthKey} />
               </div>
               <AttendanceGrid month={month} />
               <div className="pp-att-legend">

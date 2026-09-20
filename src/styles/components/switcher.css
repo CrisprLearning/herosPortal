@@ -12,6 +12,7 @@
 .pp-switcher-meta strong { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pp-switcher-meta small { font-size: 12px; color: var(--muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pp-switcher-sub { font-weight: 500 !important; }
+.pp-switcher-id { color: var(--warn); font-weight: 700; }
 .pp-switcher-caret { color: var(--muted); flex-shrink: 0; transition: transform .15s; }
 .pp-switcher.is-open .pp-switcher-caret { transform: rotate(180deg); }
 .pp-switcher-skeleton { width: 180px; height: 50px; background: var(--panel-soft); }

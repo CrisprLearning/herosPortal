@@ -135,6 +135,20 @@
 }
 .pp-choice.is-active { background: var(--brand); border-color: var(--brand); color: #fff; }
 
+/* Full-width select with our own chevron (native arrow hidden) */
+.pp-select-field { position: relative; display: block; }
+.pp-select-field .pp-select { appearance: none; -webkit-appearance: none; padding-right: 42px; cursor: pointer; }
+.pp-select-field .pp-select:invalid, .pp-select-field .pp-select.is-empty { color: #a3b1c2; }
+.pp-select-field > svg { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--muted); }
+
+/* Segmented control: a short row of mutually exclusive options that fills its field */
+.pp-segment { display: flex; padding: 4px; border-radius: 14px; background: var(--panel-soft); border: 1.5px solid var(--line); }
+.pp-segment-btn {
+  flex: 1; padding: 9px 12px; border-radius: 10px; border: none; background: transparent;
+  font-weight: 700; font-size: 14px; color: var(--ink-2); transition: background .15s, color .15s, box-shadow .15s;
+}
+.pp-segment-btn.is-active { background: #fff; color: var(--brand-deep); box-shadow: 0 1px 3px rgba(0, 74, 90, 0.15); }
+
 /* Definition lists */
 .pp-dl { display: grid; gap: 10px; grid-template-columns: 1fr; }
 .pp-dl div { padding: 10px 12px; background: var(--panel-soft); border-radius: var(--radius-sm); min-width: 0; }
