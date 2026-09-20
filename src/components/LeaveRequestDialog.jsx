@@ -3,7 +3,7 @@ import { requestHostelLeave } from '../lib/parentApi';
 import { Icon } from './Icons';
 import { formatDateTime, leaveDays } from '../lib/format';
 
-export const LEAVE_REASONS = ['Medical', 'Festival', 'Family Function', 'Personal', 'Other'];
+export const LEAVE_REASONS = ['Medical', 'Festival', 'Family Function', 'Institutional Holiday', 'Personal', 'Other'];
 export const LEAVE_DESTINATIONS = ['Home', 'Other'];
 export const LEAVE_MODES = ['Student by Self', 'Parent Accompanying', 'Guardian Accompanying', 'with Fellow Students'];
 

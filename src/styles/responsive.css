@@ -28,6 +28,8 @@
 @media (max-width: 1023px) {
   .pp-payments { display: none; }
   .pp-payment-list { display: flex; }
+  .pp-leaves { display: none; }
+  .pp-leave-list { display: flex; }
 }
 
 @media (min-width: 640px) {

@@ -3,20 +3,13 @@ import { getHostel, getHostelLeaves } from '../lib/parentApi';
 import { useChildData } from '../components/StudentProvider';
 import Avatar from '../components/Avatar';
 import LeaveRequestDialog from '../components/LeaveRequestDialog';
+import LeaveDetailsDialog, { LEAVE_TONE, cap } from '../components/LeaveDetailsDialog';
 import { useToast } from '../components/Toast';
 import { Card, PageState, Pill } from '../components/ui';
 import { Icon } from '../components/Icons';
-import { daysUntil, formatDate, formatDateTime, formatINR, formatMonth, formatTime } from '../lib/format';
+import { daysUntil, formatDate, formatINR, formatMonth } from '../lib/format';
 
 const STATUS_TONE = { paid: 'lime', pending: 'sky', overdue: 'orange' };
-const LEAVE_TONE = { pending: 'sky', approved: 'lime', rejected: 'orange', cancelled: 'ghost' };
-const LEAVE_STATUS = {
-  pending: 'Awaiting hostel approval',
-  approved: 'Approved by the hostel',
-  rejected: 'Not approved',
-  cancelled: 'Cancelled',
-};
-const cap = (w = '') => w.charAt(0).toUpperCase() + w.slice(1);
 
 // A pending payment past its due date is overdue, whatever the server says.
 function effectiveStatus(p) {
@@ -48,51 +41,43 @@ function HostelContact({ c }) {
       {first && (
         <div className="pp-contact-actions">
           <a className="pp-icon-btn is-call" href={`tel:+91${first}`} aria-label={`Call ${c.name}`} title="Call"><Icon.Phone width={17} height={17} /></a>
-          <a className="pp-icon-btn is-wa" href={`https://wa.me/91${first}`} target="_blank" rel="noopener noreferrer" aria-label={`WhatsApp ${c.name}`} title="WhatsApp"><Icon.Chat width={17} height={17} /></a>
+          <a className="pp-icon-btn is-wa" href={`https://wa.me/91${first}`} target="_blank" rel="noopener noreferrer" aria-label={`WhatsApp ${c.name}`} title="WhatsApp"><Icon.WhatsApp width={17} height={17} /></a>
         </div>
       )}
     </li>
   );
 }
 
-// One leave request, laid out so a parent can read it at a glance: when the
-// student is out and back, why and where they are going, and what the hostel
-// decided. The same markup serves phones and desktops.
-function LeaveRow({ l }) {
+// One leave request in the compact list: dates, day count and status only.
+// Clicking (or Enter / Space) opens the full details in a dialog.
+function LeaveRow({ l, onOpen }) {
   const status = l.status || 'pending';
-  const decided = l.decidedOn && (status === 'approved' || status === 'rejected');
-  const where = l.goingTo === 'Other' ? (l.destination || 'Other') : (l.goingTo || '—');
+  const label = `View leave request from ${formatDate(l.outAt)} to ${formatDate(l.inAt)}`;
+  const onKey = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen(l); } };
   return (
-    <li className={`pp-leave is-${status}`}>
-      <div className="pp-leave-when">
-        <div className="pp-leave-stamp">
-          <small>Out</small>
-          <strong>{formatDate(l.outAt, { weekday: 'short' })}</strong>
-          <span>{formatTime(l.outAt)}</span>
-        </div>
-        <span className="pp-leave-arrow" aria-hidden="true"><Icon.ArrowUpRight width={16} height={16} /></span>
-        <div className="pp-leave-stamp">
-          <small>In</small>
-          <strong>{formatDate(l.inAt, { weekday: 'short' })}</strong>
-          <span>{formatTime(l.inAt)}</span>
-        </div>
-        <Pill tone="dark" size="sm" className="pp-leave-days">{l.days} {l.days === 1 ? 'day' : 'days'}</Pill>
-      </div>
+    <tr className="pp-leave-tr" role="button" tabIndex={0} aria-label={label} onClick={() => onOpen(l)} onKeyDown={onKey}>
+      <td><strong>{formatDate(l.outAt)}</strong></td>
+      <td><strong>{formatDate(l.inAt)}</strong></td>
+      <td className="is-num">{l.days} {l.days === 1 ? 'day' : 'days'}</td>
+      <td><Pill tone={LEAVE_TONE[status] || 'ghost'}>{cap(status)}</Pill></td>
+      <td className="pp-td-chevron" aria-hidden="true"><Icon.ChevronDown width={16} height={16} /></td>
+    </tr>
+  );
+}
 
-      <dl className="pp-leave-facts">
-        <div><dt>Reason</dt><dd>{l.reason || '—'}</dd></div>
-        <div><dt>Going to</dt><dd>{where}</dd></div>
-        <div><dt>Travelling</dt><dd>{l.mode || '—'}</dd></div>
-        {l.remarks && <div className="is-wide"><dt>Note</dt><dd>“{l.remarks}”</dd></div>}
-      </dl>
-
-      <div className="pp-leave-status">
+// Same request as a stacked row for phones and tablets.
+function LeaveItem({ l, onOpen }) {
+  const status = l.status || 'pending';
+  return (
+    <li>
+      <button type="button" className="pp-leave-item" onClick={() => onOpen(l)}>
+        <span className="pp-leave-item-dates">
+          <strong>{formatDate(l.outAt, { year: undefined })} – {formatDate(l.inAt)}</strong>
+          <small>{l.days} {l.days === 1 ? 'day' : 'days'}</small>
+        </span>
         <Pill tone={LEAVE_TONE[status] || 'ghost'}>{cap(status)}</Pill>
-        <small>{LEAVE_STATUS[status] || cap(status)}</small>
-        <small>Requested {formatDateTime(l.requestedOn)}</small>
-        {decided && <small>{status === 'approved' ? 'Approved' : 'Declined'} {formatDateTime(l.decidedOn)}</small>}
-        {l.decisionNote && <p className="pp-leave-note"><b>Hostel says:</b> {l.decisionNote}</p>}
-      </div>
+        <span className="pp-td-chevron" aria-hidden="true"><Icon.ChevronDown width={16} height={16} /></span>
+      </button>
     </li>
   );
 }
@@ -103,6 +88,7 @@ export default function HostelPage() {
   // Requests created this session sit on top of the fetched list; cleared on child switch.
   const [added, setAdded] = useState([]);
   const [leaveOpen, setLeaveOpen] = useState(false);
+  const [leaveView, setLeaveView] = useState(null); // leave request whose details are open
   const toast = useToast();
   useEffect(() => { setAdded([]); setLeaveOpen(false); }, [child?.id]);
 
@@ -264,15 +250,31 @@ export default function HostelPage() {
         ) : leaves.length === 0 ? (
           <p className="pp-leave-empty">No leave requests yet. Use <b>Request Leave</b> when {child?.name?.split(' ')[0] || 'your child'} needs a few days away from the hostel.</p>
         ) : (
-          <ul className="pp-leave-rows">
-            {leaves.map((l) => <LeaveRow key={l.id} l={l} />)}
-          </ul>
+          <>
+            {/* Desktop: table. Mobile: stacked rows (CSS switches). */}
+            <div className="pp-table-wrap">
+              <table className="pp-table pp-leaves">
+                <thead>
+                  <tr><th>From</th><th>To</th><th>Days</th><th>Status</th><th aria-label="Details" /></tr>
+                </thead>
+                <tbody>
+                  {leaves.map((l) => <LeaveRow key={l.id} l={l} onOpen={setLeaveView} />)}
+                </tbody>
+              </table>
+            </div>
+            <ul className="pp-leave-list">
+              {leaves.map((l) => <LeaveItem key={l.id} l={l} onOpen={setLeaveView} />)}
+            </ul>
+            <p className="pp-leave-hint">Tap a request to see the reason, destination and the hostel's decision.</p>
+          </>
         )}
 
         <p className="pp-foot-note">
           The hostel provider is notified the moment a request is sent and confirms it from their side. Approved leaves still need the warden's sign-out at the gate.
         </p>
       </Card>
+
+      <LeaveDetailsDialog leave={leaveView} childName={child?.name} onClose={() => setLeaveView(null)} />
 
       <LeaveRequestDialog
         open={leaveOpen}

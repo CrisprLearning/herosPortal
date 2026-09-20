@@ -13,10 +13,19 @@
 .pp-contact-actions .pp-icon-btn { width: 38px; height: 38px; }
 .pp-contact-actions .pp-icon-btn.is-call { background: var(--brand); border-color: var(--brand); color: #fff; }
 .pp-contact-actions .pp-icon-btn.is-call:hover { background: var(--brand-deep); }
-.pp-contact-actions .pp-icon-btn.is-wa { background: var(--good); border-color: var(--good); color: var(--good-ink); }
-.pp-contact-actions .pp-icon-btn.is-wa:hover { background: #7fd08b; }
+.pp-contact-actions .pp-icon-btn.is-wa { background: #25d366; border-color: #25d366; color: #fff; }
+.pp-contact-actions .pp-icon-btn.is-wa:hover { background: #1fb85a; }
 /* Small phones: the reach line goes; the buttons say it all. */
 @media (max-width: 380px) {
   .pp-contact-meta span { display: none; }
   .pp-contact-row { gap: 10px; }
 }
+
+/* After-hours notice shown above the contact book outside office hours (IST) */
+.pp-hours-banner {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 14px; border-radius: 16px; margin-bottom: 14px;
+  background: var(--warn-soft); border: 1.5px solid #ffe08a; color: var(--warn-ink);
+}
+.pp-hours-banner svg { flex-shrink: 0; margin-top: 1px; }
+.pp-hours-banner p { margin: 0; font-size: 13.5px; font-weight: 600; line-height: 1.45; }

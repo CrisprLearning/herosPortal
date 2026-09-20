@@ -155,7 +155,7 @@ export async function getQuizStats(childId, quiz) {
 }
 
 // Video course progress per subject → chapter → module (watch history).
-// Feeds the "Lectures Watched" card and its per-subject popup on Student 360.
+// Feeds the "Lectures Watched" card and its per-subject popup on the Performance page.
 export async function getCourseProgress(childId) {
   if (DEMO_MODE) {
     await wait(450);
