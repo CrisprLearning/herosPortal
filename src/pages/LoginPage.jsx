@@ -12,7 +12,7 @@ import CountryCodeSelect from '../components/CountryCodeSelect';
 // authenticate.php sends a 4-digit code (rand(1000, 9999)).
 const OTP_LENGTH = 4;
 const OTP_RESEND_DEFAULT_SECONDS = 119;
-const DEFAULT_ROUTE = '/student-360';
+const DEFAULT_ROUTE = '/performance';
 const COUNTRY_CODE_STORAGE_KEY = 'pp_country_code';
 
 // Same list as the candidate portal: India plus the Gulf countries the centre

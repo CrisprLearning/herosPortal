@@ -11,6 +11,7 @@ import { formatDate } from '../lib/format';
 import { Card, KpiCard, PageState, Pill, Trend } from '../components/ui';
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const QUIZ_PAGE_SIZE = 5; // Recent Scores rows per page
 const plural = (n, word) => `${n} ${word}${Number(n) === 1 ? '' : 's'}`;
 const num1 = (v) => { const n = Number(v); return Number.isInteger(n) ? String(n) : n.toFixed(1); };
 
@@ -205,9 +206,10 @@ export default function Student360Page() {
   const { data, loading, error, child } = useChildData(getStudent360);
   const [monthKey, setMonthKey] = useState('');
   const [statsFor, setStatsFor] = useState(null); // quiz row whose class stats are open
+  const [quizPage, setQuizPage] = useState(0); // zero-based page of the Recent Scores table
 
   const months = data?.attendance?.months || [];
-  useEffect(() => { setMonthKey(months[0]?.key || ''); setStatsFor(null); }, [data]);
+  useEffect(() => { setMonthKey(months[0]?.key || ''); setStatsFor(null); setQuizPage(0); }, [data]);
   const month = months.find((m) => m.key === monthKey) || months[0];
 
   // Consolidated figures across every month returned (academic year so far).
@@ -237,6 +239,11 @@ export default function Student360Page() {
   const first = child?.name ? child.name.split(' ')[0] : 'Student';
   const tracked = attendance?.tracked !== false && months.length > 0;
   const sinceLabel = months.length ? (months[months.length - 1].label || '').split(' ')[0] : '';
+
+  // Recent Scores: quizzes[] is newest first; show QUIZ_PAGE_SIZE at a time.
+  const quizPages = Math.max(1, Math.ceil(quizzes.length / QUIZ_PAGE_SIZE));
+  const page = Math.min(quizPage, quizPages - 1);
+  const pageQuizzes = quizzes.slice(page * QUIZ_PAGE_SIZE, (page + 1) * QUIZ_PAGE_SIZE);
 
   return (
     <div className="pp-page pp-s360">
@@ -333,7 +340,7 @@ export default function Student360Page() {
       <Card className="pp-quiz-card">
         <div className="pp-card-head">
           <div className="pp-card-head-text">
-            <h2>Quiz scores</h2>
+            <h2>Recent Scores</h2>
             <p>{first}'s scores from attempted weekly quizzes</p>
           </div>
           <Pill tone="ghost">{plural(quizzes.length, 'attempt')}</Pill>
@@ -347,7 +354,7 @@ export default function Student360Page() {
                 <tr><th>Quiz</th><th>Date</th><th>Score</th><th>Accuracy</th><th aria-label="Actions" /></tr>
               </thead>
               <tbody>
-                {quizzes.map((q) => (
+                {pageQuizzes.map((q) => (
                   <tr key={q.attemptId}>
                     <td><strong>{q.title}</strong></td>
                     <td className="pp-td-muted pp-td-nowrap">{formatDate(q.dateOfExam)}</td>
@@ -362,6 +369,16 @@ export default function Student360Page() {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+        {quizzes.length > QUIZ_PAGE_SIZE && (
+          <div className="pp-pager">
+            <small>Showing {page * QUIZ_PAGE_SIZE + 1}–{page * QUIZ_PAGE_SIZE + pageQuizzes.length} of {quizzes.length}</small>
+            <div className="pp-pager-btns">
+              <button type="button" className="pp-btn pp-btn-ghost pp-btn-sm" disabled={page === 0} onClick={() => setQuizPage(page - 1)}>Previous</button>
+              <span className="pp-pager-page">Page {page + 1} of {quizPages}</span>
+              <button type="button" className="pp-btn pp-btn-ghost pp-btn-sm" disabled={page >= quizPages - 1} onClick={() => setQuizPage(page + 1)}>Next</button>
+            </div>
           </div>
         )}
       </Card>

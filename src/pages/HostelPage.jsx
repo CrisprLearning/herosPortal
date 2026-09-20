@@ -95,6 +95,9 @@ export default function HostelPage() {
         <Card className="pp-hostel-hero">
           <div className="pp-card-head">
             <h2>Residence</h2>
+            <button type="button" className="pp-btn pp-btn-primary pp-btn-leave" onClick={() => setLeaveOpen(true)}>
+              <Icon.Calendar width={16} height={16} /> Request Leave
+            </button>
           </div>
           <div className="pp-hostel-name">
             <span className="pp-hostel-icon"><Icon.Home /></span>

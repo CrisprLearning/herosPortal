@@ -71,7 +71,7 @@ export default function StudentSwitcher() {
                 <span className="pp-switcher-meta">
                   <strong>{k.name}</strong>
                   <small>{k.primaryCourse?.name}</small>
-                  <small className="pp-switcher-sub">{k.primaryCourse?.batch} · {k.candidateKey}</small>
+                  <small className="pp-switcher-sub">{k.primaryCourse?.batch} · ID {k.id}</small>
                 </span>
                 {active && <span className="pp-switcher-check"><Icon.Check width={16} height={16} /></span>}
               </button>

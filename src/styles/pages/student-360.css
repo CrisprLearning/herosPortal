@@ -130,12 +130,28 @@
 
 /* Month-by-month attendance summary */
 .pp-att-legend .is-upcoming { border-color: #e2e8f0; }
-.pp-att-months { display: flex; flex-direction: column; }
-.pp-att-month { border-bottom: 1px solid var(--line); }
-.pp-att-month:last-child { border-bottom: none; }
-.pp-att-month-btn { display: block; width: 100%; padding: 12px 8px; border: none; border-radius: 14px; background: transparent; text-align: left; font: inherit; color: inherit; cursor: pointer; }
-.pp-att-month-btn:hover { background: var(--panel-soft); }
-.pp-att-month.is-active .pp-att-month-btn { background: var(--brand-soft); }
+/* Month rows are selectable tiles: spaced out (no hairline separators), a
+   soft tint on hover, and a teal accent bar + tinted fill for the selected one. */
+.pp-att-months { display: flex; flex-direction: column; gap: 6px; }
+.pp-att-month-btn {
+  position: relative; display: block; width: 100%; padding: 12px 14px 12px 16px;
+  border: 1px solid transparent; border-radius: 14px; background: transparent;
+  text-align: left; font: inherit; color: inherit; cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.pp-att-month-btn::before {
+  content: ''; position: absolute; left: 6px; top: 12px; bottom: 12px; width: 3px;
+  border-radius: 3px; background: var(--brand); opacity: 0; transition: opacity .15s ease;
+}
+.pp-att-month-btn:hover { background: var(--panel-soft); border-color: var(--line); }
+.pp-att-month-btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.pp-att-month.is-active .pp-att-month-btn {
+  background: var(--brand-soft); border-color: rgba(0, 95, 115, 0.18);
+  box-shadow: 0 1px 2px rgba(0, 95, 115, 0.08);
+}
+.pp-att-month.is-active .pp-att-month-btn::before { opacity: 1; }
+.pp-att-month.is-active .pp-att-month-row strong { color: var(--brand-deep); }
+.pp-att-month.is-active .pp-att-month-val b { color: var(--brand); }
 .pp-att-month-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 6px; }
 .pp-att-month-row strong { font-size: 14.5px; }
 .pp-att-month-val b { font-size: 15px; }
@@ -186,3 +202,8 @@
 .pp-trend-legend i.is-student { border-color: #15803d; }
 .pp-trend-legend i.is-class { border-color: var(--warn); border-top-style: dashed; }
 .pp-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Recent Scores pager (shown only when there are more rows than one page). */
+.pp-pager { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.pp-pager small, .pp-pager-page { font-size: 13px; color: var(--muted); font-weight: 600; }
+.pp-pager-btns { display: flex; align-items: center; gap: 10px; }

@@ -14,7 +14,7 @@ import { useStudent } from './StudentProvider';
 // `title` builds the personalised page heading from the child's first name,
 // e.g. "Aarav's Performance". `label` is the nav wording.
 export const NAV = [
-  { path: '/student-360', label: 'Student 360', short: '360', icon: Icon.Grid, title: (n) => `${n}'s Performance` },
+  { path: '/performance', label: 'Student 360', short: '360', icon: Icon.Grid, title: (n) => `${n}'s Performance` },
   { path: '/courses', label: 'Courses', short: 'Courses', icon: Icon.Book, title: (n) => `${n}'s Courses` },
   { path: '/hostel', label: 'Hostel', short: 'Hostel', icon: Icon.Home, title: (n) => `${n}'s Hostel Details` },
   { path: '/contacts', label: 'Contacts', short: 'Contacts', icon: Icon.Contacts, title: (n) => `${n}'s Contacts` },
@@ -197,7 +197,7 @@ export default function Layout({ children }) {
       {confirmDialog}
 
       <aside className="pp-sidebar">
-        <NavLink className="pp-brand-logo" to="/student-360"><img src={LOGO} alt="Crispr Learning" /></NavLink>
+        <NavLink className="pp-brand-logo" to="/performance"><img src={LOGO} alt="Crispr Learning" /></NavLink>
 
         <nav className="pp-nav" aria-label="Primary">
           {NAV.map(({ path, label, icon: Ico }) => (

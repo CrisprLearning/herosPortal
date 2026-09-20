@@ -11,7 +11,7 @@ import ContactsPage from './pages/ContactsPage';
 import { isAuthenticated } from './lib/auth';
 import { currentAppPath } from './lib/paths';
 
-const DEFAULT_ROUTE = '/student-360';
+const DEFAULT_ROUTE = '/performance';
 
 function Protected({ children }) {
   if (!isAuthenticated()) {
@@ -30,7 +30,7 @@ export default function App() {
     <ToastProvider>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/student-360" element={<Protected><Student360Page /></Protected>} />
+        <Route path="/performance" element={<Protected><Student360Page /></Protected>} />
         <Route path="/courses" element={<Protected><CoursesPage /></Protected>} />
         <Route path="/hostel" element={<Protected><HostelPage /></Protected>} />
         <Route path="/contacts" element={<Protected><ContactsPage /></Protected>} />
