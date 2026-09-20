@@ -60,6 +60,13 @@ export function formatDateTime(iso, opts = {}) {
   return d.toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', ...opts });
 }
 
+export function formatTime(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '—';
+  return d.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' });
+}
+
 // Calendar days a hostel leave spans, counting both the out and in dates.
 // Returns null when either stamp is invalid or the in date is before the out date.
 export function leaveDays(outAt, inAt) {

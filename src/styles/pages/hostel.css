@@ -25,8 +25,8 @@
 .pp-contact-phones a:hover { text-decoration: underline; }
 
 .pp-payments { min-width: 720px; }
-.pp-payments td, .pp-leaves td { white-space: nowrap; }
-.pp-payments td .pp-td-note, .pp-leaves td .pp-td-note { white-space: normal; }
+.pp-payments td { white-space: nowrap; }
+.pp-payments td .pp-td-note { white-space: normal; }
 .pp-payment-list { display: none; flex-direction: column; }
 .pp-payment { padding: 12px 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
 .pp-payment:last-child { border-bottom: none; }
@@ -36,10 +36,57 @@
 .pp-payment-row > * { min-width: 0; }
 .pp-payment-row strong { overflow-wrap: anywhere; }
 
-/* Leave requests */
-.pp-leaves { min-width: 620px; }
-.pp-leaves td strong { display: block; white-space: nowrap; }
+/* Leave requests: one record per row, three zones (when / what / decision) */
 .pp-card-head .pp-btn-leave { padding: 10px 16px; font-size: 14px; }
 .pp-leave-empty { padding: 6px 0 10px; font-size: 14px; color: var(--muted); font-weight: 600; }
 .pp-leave-empty b { color: var(--ink); }
-.pp-leave-list .pp-payment-row strong { font-size: 14.5px; }
+.pp-leave-rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.pp-leave {
+  display: grid; grid-template-columns: 1fr; gap: 14px;
+  padding: 14px; border-radius: 18px; border: 1.5px solid var(--line); background: #fff;
+}
+.pp-leave.is-pending { border-color: #ffe08a; background: #fffbf0; }
+.pp-leave.is-rejected { background: #fff7f9; }
+
+/* When: out -> in stamps and the day count */
+.pp-leave-when { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pp-leave-stamp { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
+.pp-leave-stamp small { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.pp-leave-stamp strong { font-size: 14.5px; white-space: nowrap; }
+.pp-leave-stamp span { font-size: 13px; color: var(--ink-2); font-weight: 600; }
+.pp-leave-arrow { color: var(--muted); display: grid; place-items: center; flex-shrink: 0; }
+.pp-leave-arrow svg { transform: rotate(45deg); }
+.pp-leave-days { margin-left: auto; }
+
+/* What: labelled facts */
+.pp-leave-facts { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; align-content: start; }
+.pp-leave-facts > div { min-width: 0; }
+.pp-leave-facts .is-wide { grid-column: 1 / -1; }
+.pp-leave-facts dt { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.pp-leave-facts dd { margin: 1px 0 0; font-size: 14px; font-weight: 600; color: var(--ink); overflow-wrap: break-word; }
+.pp-leave-facts .is-wide dd { font-weight: 500; color: var(--ink-2); }
+
+/* Decision: pill, plain-language status, timestamps, hostel note */
+.pp-leave-status { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.pp-leave-status .pp-pill { margin-bottom: 3px; }
+.pp-leave-status small { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.pp-leave-status small:first-of-type { color: var(--ink-2); font-weight: 700; }
+.pp-leave-note { margin: 6px 0 0; padding: 8px 10px; border-radius: 10px; font-size: 13px; line-height: 1.4; background: var(--bad-soft); color: var(--bad-ink); font-weight: 500; }
+.pp-leave-note b { font-weight: 800; }
+.pp-leave.is-approved .pp-leave-note { background: #e3f5ea; color: var(--good-deep); }
+
+@media (min-width: 640px) {
+  .pp-leave { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr); }
+  .pp-leave-status { grid-column: 1 / -1; padding-top: 12px; border-top: 1px solid var(--line); }
+}
+/* Wide desktops: the three zones sit side by side, the "when" column stacked
+   Out over In so each stamp stays on one line. */
+@media (min-width: 1280px) {
+  .pp-leave { grid-template-columns: max-content minmax(0, 1fr) minmax(220px, 0.75fr); gap: 24px; padding: 16px 18px; }
+  .pp-leave-when { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .pp-leave-when .pp-leave-arrow { display: none; }
+  .pp-leave-when .pp-leave-stamp { flex-direction: row; align-items: baseline; gap: 8px; white-space: nowrap; }
+  .pp-leave-when .pp-leave-stamp small { flex: 0 0 30px; }
+  .pp-leave-days { margin: 4px 0 0; }
+  .pp-leave-status { grid-column: auto; padding-top: 0; border-top: none; border-left: 1px solid var(--line); padding-left: 20px; }
+}

@@ -6,10 +6,16 @@ import LeaveRequestDialog from '../components/LeaveRequestDialog';
 import { useToast } from '../components/Toast';
 import { Card, PageState, Pill } from '../components/ui';
 import { Icon } from '../components/Icons';
-import { daysUntil, formatDate, formatDateTime, formatINR, formatMonth } from '../lib/format';
+import { daysUntil, formatDate, formatDateTime, formatINR, formatMonth, formatTime } from '../lib/format';
 
 const STATUS_TONE = { paid: 'lime', pending: 'sky', overdue: 'orange' };
 const LEAVE_TONE = { pending: 'sky', approved: 'lime', rejected: 'orange', cancelled: 'ghost' };
+const LEAVE_STATUS = {
+  pending: 'Awaiting hostel approval',
+  approved: 'Approved by the hostel',
+  rejected: 'Not approved',
+  cancelled: 'Cancelled',
+};
 const cap = (w = '') => w.charAt(0).toUpperCase() + w.slice(1);
 
 // A pending payment past its due date is overdue, whatever the server says.
@@ -49,6 +55,48 @@ function HostelContact({ c }) {
   );
 }
 
+// One leave request, laid out so a parent can read it at a glance: when the
+// student is out and back, why and where they are going, and what the hostel
+// decided. The same markup serves phones and desktops.
+function LeaveRow({ l }) {
+  const status = l.status || 'pending';
+  const decided = l.decidedOn && (status === 'approved' || status === 'rejected');
+  const where = l.goingTo === 'Other' ? (l.destination || 'Other') : (l.goingTo || '—');
+  return (
+    <li className={`pp-leave is-${status}`}>
+      <div className="pp-leave-when">
+        <div className="pp-leave-stamp">
+          <small>Out</small>
+          <strong>{formatDate(l.outAt, { weekday: 'short' })}</strong>
+          <span>{formatTime(l.outAt)}</span>
+        </div>
+        <span className="pp-leave-arrow" aria-hidden="true"><Icon.ArrowUpRight width={16} height={16} /></span>
+        <div className="pp-leave-stamp">
+          <small>In</small>
+          <strong>{formatDate(l.inAt, { weekday: 'short' })}</strong>
+          <span>{formatTime(l.inAt)}</span>
+        </div>
+        <Pill tone="dark" size="sm" className="pp-leave-days">{l.days} {l.days === 1 ? 'day' : 'days'}</Pill>
+      </div>
+
+      <dl className="pp-leave-facts">
+        <div><dt>Reason</dt><dd>{l.reason || '—'}</dd></div>
+        <div><dt>Going to</dt><dd>{where}</dd></div>
+        <div><dt>Travelling</dt><dd>{l.mode || '—'}</dd></div>
+        {l.remarks && <div className="is-wide"><dt>Note</dt><dd>“{l.remarks}”</dd></div>}
+      </dl>
+
+      <div className="pp-leave-status">
+        <Pill tone={LEAVE_TONE[status] || 'ghost'}>{cap(status)}</Pill>
+        <small>{LEAVE_STATUS[status] || cap(status)}</small>
+        <small>Requested {formatDateTime(l.requestedOn)}</small>
+        {decided && <small>{status === 'approved' ? 'Approved' : 'Declined'} {formatDateTime(l.decidedOn)}</small>}
+        {l.decisionNote && <p className="pp-leave-note"><b>Hostel says:</b> {l.decisionNote}</p>}
+      </div>
+    </li>
+  );
+}
+
 export default function HostelPage() {
   const { data, loading, error, child } = useChildData(getHostel);
   const leavesQ = useChildData(getHostelLeaves);
@@ -76,7 +124,6 @@ export default function HostelPage() {
   const withStatus = payments.map((p) => ({ ...p, status: effectiveStatus(p) }));
 
   const leaves = [...added, ...(leavesQ.data || [])];
-  const leaveWhere = (l) => [l.reason, l.goingTo === 'Other' ? l.destination : l.goingTo].filter(Boolean).join(' · ');
   const providerPhones = residence.providerPhones || [];
   const contacts = [
     (residence.wardenName || residence.wardenPhone) && {
@@ -217,54 +264,9 @@ export default function HostelPage() {
         ) : leaves.length === 0 ? (
           <p className="pp-leave-empty">No leave requests yet. Use <b>Request Leave</b> when {child?.name?.split(' ')[0] || 'your child'} needs a few days away from the hostel.</p>
         ) : (
-          <>
-            {/* Desktop: table. Mobile: stacked rows (CSS switches). */}
-            <div className="pp-table-wrap">
-              <table className="pp-table pp-leaves">
-                <thead>
-                  <tr><th>Out Date</th><th>In Date</th><th>Number of Days</th><th>Status</th></tr>
-                </thead>
-                <tbody>
-                  {leaves.map((l) => (
-                    <tr key={l.id}>
-                      <td>
-                        <strong>{formatDateTime(l.outAt)}</strong>
-                        <small className="pp-td-note">{leaveWhere(l)}</small>
-                      </td>
-                      <td>
-                        <strong>{formatDateTime(l.inAt)}</strong>
-                        <small className="pp-td-note">{l.mode}</small>
-                      </td>
-                      <td className="pp-td-amount">{l.days} {l.days === 1 ? 'day' : 'days'}</td>
-                      <td>
-                        <Pill tone={LEAVE_TONE[l.status] || 'ghost'}>{cap(l.status)}</Pill>
-                        {l.decisionNote && <small className="pp-td-note">{l.decisionNote}</small>}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <ul className="pp-payment-list pp-leave-list">
-              {leaves.map((l) => (
-                <li key={l.id} className="pp-payment">
-                  <div className="pp-payment-row">
-                    <strong>{l.days} {l.days === 1 ? 'day' : 'days'} · {leaveWhere(l)}</strong>
-                    <Pill tone={LEAVE_TONE[l.status] || 'ghost'}>{cap(l.status)}</Pill>
-                  </div>
-                  <div className="pp-payment-row">
-                    <small>Out {formatDateTime(l.outAt)}</small>
-                    <small>In {formatDateTime(l.inAt)}</small>
-                  </div>
-                  <div className="pp-payment-row pp-payment-meta">
-                    <small>{l.mode}</small>
-                  </div>
-                  {l.decisionNote && <small className="pp-td-note">{l.decisionNote}</small>}
-                </li>
-              ))}
-            </ul>
-          </>
+          <ul className="pp-leave-rows">
+            {leaves.map((l) => <LeaveRow key={l.id} l={l} />)}
+          </ul>
         )}
 
         <p className="pp-foot-note">

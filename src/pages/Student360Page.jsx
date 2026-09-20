@@ -406,7 +406,6 @@ export default function Student360Page() {
             <Card className="pp-att-summary-card">
               <div className="pp-card-head">
                 <h2>Last 3 months</h2>
-                <Pill tone="ghost">{plural(Math.min(months.length, 3), 'month')}</Pill>
               </div>
               {/* months[] is newest first, so the first three are the latest. */}
               <ul className="pp-att-months">
@@ -435,7 +434,7 @@ export default function Student360Page() {
 
             <Card className="pp-att-card">
               <div className="pp-card-head">
-                <h2>Class attendance</h2>
+                <h2>Attendance</h2>
                 <MonthPicker months={months} value={month?.key} onChange={setMonthKey} />
               </div>
               <AttendanceGrid month={month} />
