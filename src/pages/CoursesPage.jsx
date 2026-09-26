@@ -5,6 +5,9 @@ import { Card, PageState, Pill } from '../components/ui';
 import { Icon } from '../components/Icons';
 import { daysUntil, formatDate, formatINR } from '../lib/format';
 
+// The Fees column and Fee Details popup are hidden for now; flip to true to bring them back.
+const SHOW_FEES = false;
+
 // Access status from the end date: expired / expiring (<= 30 days) / active.
 function accessStatus(course) {
   const d = daysUntil(course.accessEndsOn);
@@ -43,7 +46,7 @@ function dueText(iso) {
 
 // Normalised orders: statuses resolved, installments in order.
 function useOrders() {
-  const state = useChildData(getCoursePayments);
+  const state = useChildData(SHOW_FEES ? getCoursePayments : async () => []);
   const orders = useMemo(() => (state.data || []).map((o) => ({
     ...o,
     payments: [...(o.payments || [])]
@@ -187,11 +190,13 @@ function CourseRow({ c, order, feesLoading, onFees }) {
       <td className="pp-td-muted pp-td-date">{formatDate(c.enrolledOn)}</td>
       <td className={`pp-td-date ${status.tone === 'orange' ? 'pp-td-warn' : 'pp-td-muted'}`}>{formatDate(c.accessEndsOn)}</td>
       <td><Pill tone={status.tone} size="sm">{status.label}</Pill></td>
-      <td className="text-right">
-        <button type="button" className="pp-btn pp-btn-ghost pp-btn-sm" onClick={() => onFees(c)} disabled={feesLoading || expired} aria-label={`Fee details for ${c.name}`}>
-          <Icon.Receipt width={14} height={14} /> Fee Details
-        </button>
-      </td>
+      {SHOW_FEES && (
+        <td className="text-right">
+          <button type="button" className="pp-btn pp-btn-ghost pp-btn-sm" onClick={() => onFees(c)} disabled={feesLoading || expired} aria-label={`Fee details for ${c.name}`}>
+            <Icon.Receipt width={14} height={14} /> Fee Details
+          </button>
+        </td>
+      )}
     </tr>
   );
 }
@@ -202,7 +207,7 @@ function CoursesTable({ courses, orders, feesLoading, onFees }) {
       <table className="pp-table pp-courses-table">
         <thead>
           <tr>
-            <th>Course</th><th>Enrolled</th><th>Access ends</th><th>Status</th><th className="text-right">Fees</th>
+            <th>Course</th><th>Enrolled</th><th>Access ends</th><th>Status</th>{SHOW_FEES && <th className="text-right">Fees</th>}
           </tr>
         </thead>
         <tbody>
@@ -236,11 +241,13 @@ export default function CoursesPage() {
 
   return (
     <div className="pp-page">
-      <FeeDetailsDialog
-        course={feeCourse}
-        order={feeCourse ? orderForCourse(orders, feeCourse) : null}
-        onClose={() => setFeeCourse(null)}
-      />
+      {SHOW_FEES && (
+        <FeeDetailsDialog
+          course={feeCourse}
+          order={feeCourse ? orderForCourse(orders, feeCourse) : null}
+          onClose={() => setFeeCourse(null)}
+        />
+      )}
 
       <Card>
         <div className="pp-card-head">

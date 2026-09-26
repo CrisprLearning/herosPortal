@@ -156,7 +156,6 @@ export default function LeaveRequestDialog({ open, childId, childName, onCreated
         <div className="pp-modal-head">
           <div>
             <h2 id="pp-leave-title">Request leave</h2>
-            <p>Tell the hostel when {first} will be away. The hostel provider is notified as soon as you send this.</p>
           </div>
           <button type="button" className="pp-icon-btn" onClick={onClose} aria-label="Close" disabled={busy}>
             <Icon.X width={18} height={18} />

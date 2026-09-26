@@ -191,7 +191,7 @@ export default function HostelPage() {
         <div className="pp-table-wrap">
           <table className="pp-table pp-payments">
             <thead>
-              <tr><th>Month</th><th>Amount</th><th>Due on</th><th>Paid on</th><th>Mode</th><th>Receipt</th><th>Status</th></tr>
+              <tr><th>Month</th><th>Amount</th><th>Due on</th><th>Paid on</th><th>Mode</th><th>Status</th></tr>
             </thead>
             <tbody>
               {withStatus.map((p) => (
@@ -204,7 +204,6 @@ export default function HostelPage() {
                   <td className="pp-td-muted">{formatDate(p.dueOn)}</td>
                   <td>{p.paidOn ? formatDate(p.paidOn) : <span className="pp-td-muted">—</span>}{p.late && <small className="pp-td-note is-warn">Paid late</small>}</td>
                   <td className="pp-td-muted">{p.mode || '—'}</td>
-                  <td className="pp-td-muted">{p.receiptNo || '—'}</td>
                   <td><Pill tone={STATUS_TONE[p.status] || 'ghost'}>{cap(p.status)}</Pill></td>
                 </tr>
               ))}
@@ -225,16 +224,11 @@ export default function HostelPage() {
               </div>
               <div className="pp-payment-row pp-payment-meta">
                 <small>{p.paidOn ? `Paid ${formatDate(p.paidOn, { year: undefined })} · ${p.mode}` : 'Not paid yet'}{p.late ? ' · late' : ''}</small>
-                <small>{p.receiptNo || ''}</small>
               </div>
               {p.note && <small className="pp-td-note">{p.note}</small>}
             </li>
           ))}
         </ul>
-
-        <p className="pp-foot-note">
-          Pay at the residence office or via the payment link shared on WhatsApp. Receipts are issued within 24 hours.
-        </p>
       </Card>
 
       <Card className="pp-leave-card">
@@ -268,10 +262,6 @@ export default function HostelPage() {
             <p className="pp-leave-hint">Tap a request to see the reason, destination and the hostel's decision.</p>
           </>
         )}
-
-        <p className="pp-foot-note">
-          The hostel provider is notified the moment a request is sent and confirms it from their side. Approved leaves still need the warden's sign-out at the gate.
-        </p>
       </Card>
 
       <LeaveDetailsDialog leave={leaveView} childName={child?.name} onClose={() => setLeaveView(null)} />

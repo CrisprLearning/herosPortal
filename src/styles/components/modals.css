@@ -35,7 +35,7 @@
 .pp-profile-modal .pp-modal-actions { margin-top: 6px; }
 
 /* Hostel leave request */
-.pp-leave-modal { max-width: 560px; max-height: calc(100dvh - 32px); overflow-y: auto; }
+form.pp-leave-modal { max-width: 680px; max-height: calc(100dvh - 32px); overflow-y: auto; }
 .pp-leave-modal .pp-modal-head { margin-bottom: 18px; }
 .pp-leave-modal .pp-textarea { min-height: 64px; }
 .pp-leave-modal .pp-modal-actions { margin-top: 18px; }
