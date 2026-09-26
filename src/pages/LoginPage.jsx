@@ -328,7 +328,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <p className="pp-login-foot">Trouble signing in? Call your centre or WhatsApp +91 484 233 4455.</p>
+      <p className="pp-login-foot">Trouble signing in? Contact our team at support@crisprlearning.com</p>
     </div>
   );
 }

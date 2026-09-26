@@ -184,7 +184,7 @@ export default function Layout({ children }) {
             <Icon.Logout width={18} height={18} /> Sign out
           </button>
         </div>
-        <p className="pp-login-foot">Need help? Call your centre or WhatsApp +91 484 233 4455.</p>
+        <p className="pp-login-foot">Need help? Contact our team at support@crisprlearning.com</p>
         {profileDialog}
         {confirmDialog}
       </div>

@@ -71,7 +71,7 @@ export default function LeaveDetailsDialog({ leave, childName, onClose }) {
           {status === 'approved'
             ? `${first} still needs the warden's sign-out at the gate when leaving.`
             : status === 'pending'
-              ? 'The hostel provider has been notified and will confirm from their side.'
+              ? 'The hostel administrator / warden has been notified and will approve the leave from their side.'
               : ''}
         </p>
       </div>

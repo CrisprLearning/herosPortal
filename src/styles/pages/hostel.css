@@ -78,11 +78,11 @@
 .pp-leave-facts { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; align-content: start; }
 .pp-leave-facts > div { min-width: 0; }
 .pp-leave-facts .is-wide { grid-column: 1 / -1; }
-.pp-leave-facts dt { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.pp-leave-facts dt { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; }
 .pp-leave-facts dd { margin: 1px 0 0; font-size: 14px; font-weight: 600; color: var(--ink); overflow-wrap: break-word; }
 .pp-leave-facts .is-wide dd { font-weight: 500; color: var(--ink-2); }
 .pp-leave-timeline { list-style: none; margin: 16px 0 0; padding: 12px 0 0; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; }
 .pp-leave-timeline li { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; }
-.pp-leave-timeline span { color: var(--muted); font-weight: 600; }
+.pp-leave-timeline span { font-size: 12px; color: #94a3b8; font-weight: 600; }
 .pp-leave-timeline b { font-weight: 700; color: var(--ink-2); text-align: right; }
 .pp-leave-modal .pp-foot-note:empty { display: none; }
