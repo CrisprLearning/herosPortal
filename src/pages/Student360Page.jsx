@@ -13,7 +13,7 @@ import { Card, KpiCard, PageState, Pill, Trend } from '../components/ui';
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const QUIZ_PAGE_SIZE = 5; // Recent Scores rows per page
-const plural = (n, word) => `${n} ${word}${Number(n) === 1 ? '' : 's'}`;
+const plural = (n, word, many = `${word}s`) => `${n} ${Number(n) === 1 ? word : many}`;
 const num1 = (v) => { const n = Number(v); return Number.isInteger(n) ? String(n) : n.toFixed(1); };
 
 // Attendance: ≥85 High, 70–84 Fair, else Low.
@@ -280,10 +280,10 @@ export default function Student360Page() {
 
         <Card>
           <div className="pp-card-head">
-            <h2>Subject Strength</h2>
-            <Pill tone="ghost">last 5 tests</Pill>
+            <h2>Subject Average</h2>
+            <Pill tone="ghost">last 5 quizzes</Pill>
           </div>
-          {subjects.length === 0 && <p className="pp-empty">Subject strength appears after the first test.</p>}
+          {subjects.length === 0 && <p className="pp-empty">Subject strength appears after the first quiz.</p>}
           <ul className="pp-donuts">
             {subjects.map((s) => (
               <li key={s.name} className="pp-donut">
@@ -305,18 +305,18 @@ export default function Student360Page() {
         </div>
       </div>
 
-      {/* ── Exam trend (+ strike rate / avg score) then quiz scores, 1:2 ── */}
+      {/* ── Quiz trend (+ strike rate / avg score) then quiz scores, 1:2 ── */}
       <div className="pp-grid pp-grid-360-quiz">
         <div className="pp-stack pp-exam-col">
         <Card className="pp-exam-card">
           <div className="pp-card-head">
             <div className="pp-card-head-text">
               <h2>Exam Progress</h2>
-              <p>{first}'s marks vs class average, last {plural(examTrend.length, 'exam')}</p>
+              <p>{first}'s marks vs class average, last {plural(examTrend.length, 'quiz', 'quizzes')}</p>
             </div>
           </div>
           {examTrend.length < 2 ? (
-            <p className="pp-empty">The trend appears after {first} has written at least two exams.</p>
+            <p className="pp-empty">The trend appears after {first} has attempted at least two quizzes.</p>
           ) : (
             <ExamTrendChart exams={examTrend} studentLabel={first} />
           )}
@@ -327,13 +327,13 @@ export default function Student360Page() {
             title="Strike Rate"
             icon={<Icon.Flash width={16} height={16} />}
             value={summary.strikeRateFrom > 0 ? `${num1(summary.strikeRate)}%` : 'NA'}
-            sub={summary.strikeRateFrom > 0 ? <>from <b>{summary.strikeRateFrom}</b> attempted tests</> : 'no tests attempted'}
+            sub={summary.strikeRateFrom > 0 ? <>from <b>{summary.strikeRateFrom}</b> attempted quizzes</> : 'no quizzes attempted'}
           />
           <KpiCard
             title="Avg Score"
             icon={<Icon.BarChart width={16} height={16} />}
             value={summary.averageScoreFrom > 0 ? <>{Math.round(summary.averageScore)} <small>/ {summary.averageScoreBase}</small></> : 'NA'}
-            sub={summary.averageScoreFrom > 0 ? <>from <b>{summary.averageScoreFrom}</b> attempted tests</> : 'no tests attempted'}
+            sub={summary.averageScoreFrom > 0 ? <>from <b>{summary.averageScoreFrom}</b> attempted quizzes</> : 'no quizzes attempted'}
           />
         </div>
         </div>
