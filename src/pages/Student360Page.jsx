@@ -283,7 +283,7 @@ export default function Student360Page() {
             <h2>Subject Average</h2>
             <Pill tone="ghost">last 5 quizzes</Pill>
           </div>
-          {subjects.length === 0 && <p className="pp-empty">Subject strength appears after the first quiz.</p>}
+          {subjects.length === 0 && <p className="pp-empty">Subject averages appear after the first quiz.</p>}
           <ul className="pp-donuts">
             {subjects.map((s) => (
               <li key={s.name} className="pp-donut">
